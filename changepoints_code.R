@@ -127,7 +127,7 @@ param.est(v1.man)
 plot(v1.man,cpt.width=2)
 
 
-
+hdjshak
 
 
 
