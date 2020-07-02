@@ -1,3 +1,5 @@
+####### correlation dist plot / correleation matrix ##################
+
 library(tidyverse)
 library(tidytext)
 library(changepoint)
@@ -36,20 +38,20 @@ result <- dbGetQuery(jdbcConnection, 'USE WAREHOUSE "HATTIE_ANALYSIS"')
 
 top_level <- dbGetQuery(jdbcConnection, 'SELECT TO_DATE(COLLECTOR_TSTAMP) as date,  sum(TIME_ENGAGED_IN_S) as total_seconds, COUNT(DISTINCT NETWORK_USERID) as top_level_users, 
                         count(page_url) as top_level_pageviews, count(distinct session_id) as top_levelsessions
-                        FROM "SNOWPLOW"."DERIVED"."PAGE_VIEWS" where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                        FROM "SNOWPLOW"."DERIVED"."PAGE_VIEWS" where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                         and PAGE_URLHOST = \'www.mumsnet.com\' GROUP BY 1 ')
 
 
 traffic_sources <- dbGetQuery(jdbcConnection, 'select TO_DATE(COLLECTOR_TSTAMP) as date, refr_medium, count(distinct session_id) as traffic_sources_sessions
                               from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                              where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                              where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                               and PAGE_URLHOST = \'www.mumsnet.com\' GROUP BY 1,2')
 
 new_returning_users <- dbGetQuery(jdbcConnection, 'select to_date(COLLECTOR_TSTAMP) as date, 
                                   case when session_index = \'1\' then \'new_user\' else \'returning_user\' end as new_or_returning_user,
                                   count(distinct NETWORK_USERID) AS new_returning_users_users
                                   from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                   and PAGE_URLHOST = \'www.mumsnet.com\' 
                                   group by 1,2')
 
@@ -58,16 +60,17 @@ active <- dbGetQuery(jdbcConnection, 'select to_date(COLLECTOR_TSTAMP) as date,
                                   count(distinct NETWORK_USERID) AS active_users,
                                   count(page_url) as active_pageviews
                                   from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                   and PAGE_URLHOST = \'www.mumsnet.com\' 
                                   and PAGE_REFERRER like \'%Talk/active%\'
                                   group by 1')
 
+ghkjdhf
 land_on_talk_thread <- dbGetQuery(jdbcConnection, 'select to_date(COLLECTOR_TSTAMP) as date, 
                                   count(distinct NETWORK_USERID) AS land_on_talk_thread_users,
                                   count(page_url) as land_on_talk_thread_pageviews
                                   from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                   and PAGE_URLHOST = \'www.mumsnet.com\' 
                                   and PAGE_URL like \'%/Talk%\'
                                   AND PAGE_VIEW_IN_SESSION_INDEX =1
@@ -77,7 +80,7 @@ land_on_content <- dbGetQuery(jdbcConnection, 'select to_date(COLLECTOR_TSTAMP) 
                                   count(distinct NETWORK_USERID) AS land_on_content_users,
                                   count(page_url) as land_on_content_pageviews
                                   from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                  where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                   and PAGE_URLHOST = \'www.mumsnet.com\' 
                                   and PAGE_URL not like \'%/Talk%\'
                                   AND PAGE_VIEW_IN_SESSION_INDEX =1
@@ -88,7 +91,7 @@ land_on_home_page <- dbGetQuery(jdbcConnection, 'select to_date(COLLECTOR_TSTAMP
                                 count(distinct NETWORK_USERID) AS land_on_homepage_users,
                                 count(page_url) as land_on_homepage_pageviews
                                 from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                 and PAGE_URLHOST = \'www.mumsnet.com\' 
                                 and PAGE_URL = \'https://www.mumsnet.com/\'
                                 AND PAGE_VIEW_IN_SESSION_INDEX =1
@@ -102,7 +105,7 @@ top_n_talk_categories <- dbGetQuery(jdbcConnection, 'select date,talk_category_b
                                                       count(distinct NETWORK_USERID) AS users_a,
                                                       count(page_url) as pageviews_a
                                                       from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                                      where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                                      where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                                       and PAGE_URLHOST = \'www.mumsnet.com\' 
                                                       and page_url like \'%Talk%\'
                                                       group by 1 order by 3 desc limit 25) as a 
@@ -112,33 +115,40 @@ top_n_talk_categories <- dbGetQuery(jdbcConnection, 'select date,talk_category_b
                                                       count(distinct NETWORK_USERID) AS users_b,
                                                       count(page_url) as pageviews_b
                                                       from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-                                                      where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                                      where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
                                                       and PAGE_URLHOST = \'www.mumsnet.com\' 
                                                       and page_url like \'%Talk%\'
                                                       group by 1,2) as b
                                                       on a.talk_category_a = b.talk_category_b')
+# this is only 2 weeks worth of data
 
-# engaged_users_2_weeks <- dbGetQuery(jdbcConnection, 'select date_b as date, sum(pageviews) as engaged_users_2_weeks_pageviews,count(distinct NETWORK_USERID_B) AS engaged_users_2_weeks_users from (
-#                                                     select 
-#                                                     NETWORK_USERID as NETWORK_USERID_a,
-#                                                     count(distinct to_date(COLLECTOR_TSTAMP)) as days_active
-#                                                     from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-#                                                     where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
-#                                                     and PAGE_URLHOST = \'www.mumsnet.com\' 
-#                                                     group by 1 
-#                                                     having days_active >7) as a 
-#                                                     join
-#                                                     (select 
-#                                                     to_date(COLLECTOR_TSTAMP) as date_b,
-#                                                     NETWORK_USERID as NETWORK_USERID_b,
-#                                                     count(page_url) as pageviews
-#                                                     from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
-#                                                     where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-01-01\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
-#                                                     and PAGE_URLHOST = \'www.mumsnet.com\' group by 1,2 ) as b
-#                                                     on a.NETWORK_USERID_a = b.NETWORK_USERID_b
-#                                                     group by 1')
+engaged_users_2_weeks <- dbGetQuery(jdbcConnection, 'select date_b as date, sum(pageviews) as engaged_users_2_weeks_pageviews,count(distinct NETWORK_USERID_B) AS engaged_users_2_weeks_users from (
+                                                    select 
+                                                    NETWORK_USERID as NETWORK_USERID_a,
+                                                    count(distinct to_date(COLLECTOR_TSTAMP)) as days_active
+                                                    from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
+                                                    where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                                    and PAGE_URLHOST = \'www.mumsnet.com\' 
+                                                    group by 1 
+                                                    having days_active >7) as a 
+                                                    join
+                                                    (select 
+                                                    to_date(COLLECTOR_TSTAMP) as date_b,
+                                                    NETWORK_USERID as NETWORK_USERID_b,
+                                                    count(page_url) as pageviews
+                                                    from "SNOWPLOW"."DERIVED"."PAGE_VIEWS"
+                                                    where TO_DATE(COLLECTOR_TSTAMP)>=\'2020-05-10\' and TO_DATE(COLLECTOR_TSTAMP)<=\'2020-06-26\'
+                                                    and PAGE_URLHOST = \'www.mumsnet.com\' group by 1,2 ) as b
+                                                    on a.NETWORK_USERID_a = b.NETWORK_USERID_b
+                                                    group by 1')
                                       
 
+
+
+
+
+# ggplot(data=engaged_users_2_weeks, aes(x=DATE, y=ENGAGED_USERS, group = 1)) +
+#   geom_line()
 
 
 # CONVERT DF TO TIBBLES
@@ -159,8 +169,10 @@ land_on_home_page <-  land_on_home_page %>% as_tibble %>% mutate(DATE = ymd(DATE
 
 top_n_talk_categories <-  top_n_talk_categories %>% as_tibble %>% mutate(DATE = ymd(DATE)) %>% arrange(desc(DATE))
 
-#engaged_users_2_weeks <-  engaged_users_2_weeks %>% as_tibble %>% mutate(DATE = ymd(DATE)) %>% arrange(desc(DATE))
+engaged_users_2_weeks <-  engaged_users_2_weeks %>% as_tibble %>% mutate(DATE = ymd(DATE)) %>% arrange(desc(DATE))
 
+
+head(top_n_talk_categories)
 
 # PIVOT THE TABLES
 
@@ -172,6 +184,10 @@ head(new_returning_users)
 
 top_n_talk_categories <- cast(top_n_talk_categories, DATE ~ TALK_CATEGORY_B, value = "TOP_N_TALK_CATEGORIES_PAGEVIEWS")
 
+head(top_n_talk_categories,5)
+View(top_n_talk_categories)
+
+head(top_n_talk_categories,5)
 
 
 #UPPER CASE COLUMN TITLES
@@ -194,10 +210,12 @@ traffic_sources$paid <- NULL
 top_n_talk_categories$v1 <- NULL
 head(top_n_talk_categories)
 
+
+
 # Joining all the dataframes together
 
 #do.call("rbind", list(top_level,traffic_sources,new_returning_users,active,land_on_talk_thread,land_on_content,land_on_home_page,top_n_talk_categories,engaged_users_2_weeks))
-full_join <-  list(top_level,traffic_sources,new_returning_users,active,land_on_talk_thread,land_on_content,land_on_home_page,top_n_talk_categories) %>% reduce(left_join, by = "DATE")
+full_join <-  list(top_level,traffic_sources,new_returning_users,active,land_on_talk_thread,land_on_content,land_on_home_page,engaged_users_2_weeks,top_n_talk_categories) %>% reduce(left_join, by = "DATE")
 head(full_join)
 
 correlations_against_total_time <- cor(full_join[-1], full_join$TOTAL_SECONDS) 
@@ -253,38 +271,21 @@ plot_changepoints <- function(timeseries) {
 }
 
 
-# PLOTS
 
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = TOTAL_SECONDS))
-plot_changepoints(timeseries_with_changepoints)
 
+
+# Running for USERS
 timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = TOP_LEVEL_USERS))
 plot_changepoints(timeseries_with_changepoints)
 
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = TOP_LEVEL_PAGEVIEWS))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = womens_rights))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = SEARCH))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = ACTIVE_PAGEVIEWS))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = LAND_ON_TALK_THREAD_USERS))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = LAND_ON_CONTENT_USERS))
-plot_changepoints(timeseries_with_changepoints)
-
-timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = LAND_ON_HOMEPAGE_USERS))
-plot_changepoints(timeseries_with_changepoints)
+# # Running for TOTAL_SECONDS
+# timeseries_with_changepoints <- find_changepoints(full_join %>% select(DATE, y = TOTAL_SECONDS))
+# plot_changepoints(timeseries_with_changepoints)
 
 
 
-View(full_join)
+
+
 
 
 
@@ -311,5 +312,7 @@ View(full_join)
 # timeseries_with_changepoints <- find_changepoints(pageviews %>% select(DATE, y = TOTAL_SECONDS))
 # plot_changepoints(timeseries_with_changepoints)
 # 
+# 
+# ??BCP
 
 
